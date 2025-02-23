@@ -11,7 +11,7 @@ WORKDIR /app
 FROM base AS deps
 # Copy package.json and package-lock.json
 COPY package*.json ./
-# Install dependencies with legacy peer deps
+# Install dependencies
 RUN npm ci --legacy-peer-deps
 
 # Build the application
@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 # Copy the rest of the application code
 COPY . .
-# Build the Next.js application
+# Build the Next.js application in standalone mode
 RUN npm run build
 
 # Prepare the final image
