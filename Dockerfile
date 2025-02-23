@@ -1,37 +1,48 @@
+# Use the official Node.js Alpine image as a base
 FROM node:18.20.7-alpine3.21 AS base
 
-FROM base AS deps
+# Install libc6-compat for compatibility
 RUN apk add --no-cache libc6-compat
+
+# Set the working directory
 WORKDIR /app
+
+# Install dependencies in a separate stage
+FROM base AS deps
 # Copy package.json and package-lock.json
 COPY package*.json ./
-RUN npm ci
+# Install dependencies with legacy peer deps
+RUN npm ci --legacy-peer-deps
 
+# Build the application
 FROM base AS builder
 WORKDIR /app
+# Copy node_modules from the deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-
-# Install dependencies
-RUN npm install
-
 # Copy the rest of the application code
 COPY . .
-
 # Build the Next.js application
 RUN npm run build
 
-
+# Prepare the final image
 FROM base AS runner
 WORKDIR /app
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create a user and group for running the app
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy the necessary files from the builder stage
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-USER nextjs
-EXPOSE 3000
-ENV PORT 3000
-CMD ["node", "server.js"]
 
+# Switch to the non-root user
+USER nextjs
+
+# Expose the port the app runs on
+EXPOSE 3000
+# Set the environment variable for the port
+ENV PORT 3000
+
+# Start the Next.js application
+CMD ["node", "server.js"]
