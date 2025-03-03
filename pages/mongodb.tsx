@@ -56,8 +56,7 @@ export default function MongoDBPage() {
       <Header />
       <div className="container mx-auto p-4 flex-1">
         {/* Top Controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
             <label className="text-sm">Items per page:</label>
             <select
               value={limit}
@@ -71,7 +70,10 @@ export default function MongoDBPage() {
               <option value="350">350</option>
             </select>
           </div>
-          <div className="flex items-center space-x-2 text-sm">
+
+
+
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4 mb-4">
             <Button onClick={() => setPage(page - 1)} disabled={page === 1 || loading} variant="secondary">
               Previous
             </Button>
@@ -82,13 +84,13 @@ export default function MongoDBPage() {
               Next
             </Button>
           </div>
-        </div>
+
 
         {/* Table Section */}
         <Card>
-          <CardHeader>
+          {/* <CardHeader>
             <CardTitle>File List</CardTitle>
-          </CardHeader>
+          </CardHeader> */}
           <CardContent className="overflow-x-auto">
                 {loading ? (
                 <Loading /> // Reusable loading component
