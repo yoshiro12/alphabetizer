@@ -12,6 +12,7 @@ interface DataItem {
   code: string;
 }
 
+
 export default function MongoDBPage() {
   const [data, setData] = useState<DataItem[]>([]);
   const [loading, setLoading] = useState(true);
