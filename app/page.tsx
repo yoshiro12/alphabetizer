@@ -1,5 +1,5 @@
-import Header from "../components/Header";
-import { Alphabetizer } from "../components/alphabetizer";
+import Header from "@/components/Header";
+import { Alphabetizer } from "@/components/alphabetizer";
 
 export default function Home() {
   return (
