@@ -10,8 +10,11 @@ export async function GET(req) {
     const skip = (page - 1) * limit;
 
     const client = await clientPromise;
-    const db = client.db("techzcloud");
-    const collection = db.collection("files");
+    const dbName = process.env.MONGODB_DB || "defaultDB";
+    const collectionName = process.env.MONGODB_COLLECTION || "defaultCollection";
+    
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
 
     const data = await collection
       .find({}, { projection: { filename: 1, code: 1, _id: 0 } })

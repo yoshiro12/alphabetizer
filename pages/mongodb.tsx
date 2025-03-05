@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/Loading"; // Import Loading component
 import Header from "@/components/Header";
 
+const customValue = process.env.NEXT_PUBLIC_CUSTOM_VALUE || "Change the value in on your .env file";
+
 interface DataItem {
   filename: string;
   code: string;
 }
+
 
 
 export default function MongoDBPage() {
@@ -21,6 +24,7 @@ export default function MongoDBPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loadTime, setLoadTime] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchData(page, limit);
@@ -107,7 +111,7 @@ export default function MongoDBPage() {
                     <TableBody>
                     {data.map((item, index) => (
                         <TableRow key={index}>
-                        <TableCell className="font-medium break-words">{item.filename} : https://anidl.ddlserverv1.me.in/dl/{item.code}</TableCell>
+                        <TableCell className="font-medium break-words">{item.filename} : {customValue} {item.code}</TableCell>
                       
                         </TableRow>
                     ))}
