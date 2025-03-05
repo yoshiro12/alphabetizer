@@ -1,4 +1,6 @@
-export const dynamic = "force-dynamic"; // Prevent static rendering
+import clientPromise from "@/lib/mongodb";
+
+export const dynamic = "force-dynamic"; // ✅ Prevents static rendering error
 
 export async function GET(req) {
   try {
@@ -10,8 +12,11 @@ export async function GET(req) {
     const skip = (page - 1) * limit;
 
     const client = await clientPromise;
-    const db = client.db(process.env.MONGO_DB_NAME); // Using ENV variable
-    const collection = db.collection(process.env.MONGO_COLLECTION_NAME); // Using ENV variable
+    const dbName = process.env.MONGODB_DB || "defaultDB";
+    const collectionName = process.env.MONGODB_COLLECTION || "defaultCollection";
+
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
 
     const data = await collection
       .find({}, { projection: { filename: 1, code: 1, _id: 0 } })
@@ -21,6 +26,8 @@ export async function GET(req) {
       .toArray();
 
     const totalItems = await collection.countDocuments();
+
+    console.log("✅ Data fetched successfully!");
 
     return new Response(
       JSON.stringify({
