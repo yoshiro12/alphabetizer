@@ -22,7 +22,7 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow">
-    <h1 className="text-xl font-bold mb-4">Sign in</h1>
+    <h1 className="text-xl font-bold mb-4 text-center">Sign in</h1>
     <AuthForm />
   </div>
   );
