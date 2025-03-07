@@ -29,4 +29,4 @@ next-env.d.ts
 .env
 
 # ignore prisma schema file
-/prisma
+prisma/migrations/*
