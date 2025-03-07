@@ -21,8 +21,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 # Copy the rest of the application code
 COPY . .
-RUN npm install
-# Build the Next.js application in standalone mode
+
+# Ensure Prisma client is generated before build
+RUN npx prisma generate
+
+# Build the Next.js application
 RUN npm run build
 
 # Prepare the final image
@@ -34,7 +37,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 # Copy the necessary files from the builder stage
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./ 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Switch to the non-root user
