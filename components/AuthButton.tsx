@@ -11,6 +11,11 @@ export default function AuthForm() {
     e.preventDefault();
     if (!email) return alert("Please enter your email");
 
+    // ✅ Only allow Gmail addresses
+    if (!email.endsWith("@gmail.com")) {
+      return alert("Only Gmail addresses are allowed.");
+    }
+
     await signIn("email", { email, redirect: false });
     alert("Check your email for the magic link!");
   };
@@ -42,7 +47,7 @@ export default function AuthForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter your Gmail address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border p-2 rounded w-full"

@@ -16,12 +16,27 @@ export const authOptions: AuthOptions = {
     EmailProvider({
       from: process.env.EMAIL_FROM ?? "default@example.com",
       sendVerificationRequest: async ({ identifier: email, url }) => {
+        // 🚨 Delete any old tokens for this email before processing
+        await prisma.verificationToken.deleteMany({
+          where: { identifier: email },
+        });
+        
         // ✅ Only allow emails in the ALLOWED_EMAILS list
+        
         if (!ALLOWED_EMAILS.includes(email)) {
-          console.error(`Unauthorized email login attempt: ${email}`);
-          throw new Error("Access Denied: This email is not allowed.");
-        }
 
+          console.error(`Unauthorized email login attempt: ${email}`);
+
+          // 🚨 Manually delete the token from the database
+          await prisma.verificationToken.deleteMany({
+            where: { identifier: email },
+          });
+      
+          throw new Error("Access Denied: This email is not allowed.");
+      
+        }
+        
+        
         try {
           await resend.emails.send({
             from: process.env.EMAIL_FROM!,
