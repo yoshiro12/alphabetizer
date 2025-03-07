@@ -12,7 +12,7 @@ FROM base AS deps
 # Copy package.json and package-lock.json
 COPY package*.json ./
 # Install dependencies
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 
 # Build the application
 FROM base AS builder
