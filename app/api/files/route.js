@@ -1,13 +1,13 @@
 import clientPromise from "@/lib/mongodb";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Make sure this path is correct for your project
+import NextAuth, { AuthOptions } from "next-auth";
 
 export const dynamic = "force-dynamic"; // ✅ Prevents static rendering error
 
 export async function GET(req) {
   try {
     // Get the current session
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(AuthOptions);
     
     // Check if user is authenticated
     if (!session) {
