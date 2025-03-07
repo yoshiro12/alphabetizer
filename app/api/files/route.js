@@ -1,25 +1,38 @@
 import clientPromise from "@/lib/mongodb";
 import { getServerSession } from "next-auth/next";
-import NextAuth, { AuthOptions } from "next-auth";
+import { authOptions } from "@/components/authOptions"; // Keep your current import path
+import { headers } from "next/headers";
 
-export const dynamic = "force-dynamic"; // ✅ Prevents static rendering error
+export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   try {
-    // Get the current session
-    const session = await getServerSession(AuthOptions);
+    // Get the session
+    const session = await getServerSession(authOptions);
+    
+    console.log("🛠️ Session Data:", session); // Debugging
     
     // Check if user is authenticated
-    if (!session) {
+    if (!session || !session.user) {
+      console.log("❌ No session found");
       return new Response(
         JSON.stringify({ error: "Unauthorized: You must be logged in to access this resource" }),
         { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
     
-    console.log("🔍 Fetching data for user:", session.user.email);
+    // Check for admin role
+    if (session.user.role !== "ADMIN") {
+      console.log("⛔ Access denied: User role:", session.user.role);
+      return new Response(
+        JSON.stringify({ error: "Forbidden: Admin access required" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
     
-    // If authenticated, proceed with the data fetching
+    console.log("✅ Admin access granted for:", session.user.email);
+    
+    // Rest of your code remains the same
     const { searchParams } = new URL(req.url);
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 100;
@@ -28,7 +41,6 @@ export async function GET(req) {
     const client = await clientPromise;
     const dbName = process.env.MONGODB_DB || "defaultDB";
     const collectionName = process.env.MONGODB_COLLECTION || "defaultCollection";
-    
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     
@@ -38,7 +50,7 @@ export async function GET(req) {
       .skip(skip)
       .limit(limit)
       .toArray();
-    
+      
     const totalItems = await collection.countDocuments();
     
     console.log("✅ Data fetched successfully!");

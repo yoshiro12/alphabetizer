@@ -1,12 +1,13 @@
 "use client";
 
-import { useSession } from "next-auth/react"; // Import useSession to check authentication
+import { useSession, signOut } from "next-auth/react"; // Import useSession to check authentication
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const { data: session } = useSession(); // Get session data
+  const userRole = session?.user?.role || "user";
 
   return (
     <header className="border-b bg-background">
@@ -23,16 +24,21 @@ export default function Header() {
               <Link href="/alphabetizer">
                 <Button variant="outline">Alphabetizer</Button>
               </Link>
-              <Link href="/mongodb">
-                <Button variant="outline">MongoDB Page</Button>
-              </Link>
+              {userRole === "ADMIN" && (
+                 <Link href="/mongodb">
+                 <Button variant="outline">MongoDB Page</Button>
+               </Link>
+              )}
+             
+              <button onClick={() => signOut()}>Sign Out</button>
+
             </>
+            
           ) : (
             <Link href="/auth/login">
               <Button variant="outline">Login</Button>
             </Link>
           )}
-          
           <ThemeToggle />
         </div>
       </div>

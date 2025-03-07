@@ -13,7 +13,6 @@ const ALLOWED_EMAILS = process.env.ALLOWED_EMAILS?.split(",") || [];
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
-
     EmailProvider({
       from: process.env.EMAIL_FROM ?? "default@example.com",
       sendVerificationRequest: async ({ identifier: email, url }) => {
@@ -48,17 +47,47 @@ export const authOptions: AuthOptions = {
   session: { strategy: "jwt" as const },
   callbacks: {
     async session({ session, token }: { session: any; token: any }) {
+      console.log("Session Callback - Incoming token:", token);
+      console.log("Session Callback - Incoming session:", session);
+      
       if (session.user) {
-        session.user.email = token.email;
-        session.user.id = token.id; // ✅ Include user ID in session
+        session.user.email = token.email || session.user.email;
+        session.user.id = token.id || null;
+        session.user.role = token.role || "user";
       }
+      
+      console.log("Session Callback - Outgoing session:", session);
       return session;
     },
-    async jwt({ token, user }: { token: any; user?: any }) {
+    async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
+      console.log("JWT Callback - Incoming user:", user);
+      console.log("JWT Callback - Incoming token:", token);
+      
       if (user) {
         token.email = user.email;
-        token.id = user.id; // ✅ Store user ID in JWT
+        token.id = user.id;
+        
+        try {
+          // This part fetches the role from your database
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { role: true }
+          });
+          
+          console.log("JWT Callback - Database user:", dbUser);
+          
+          if (dbUser) {
+            token.role = dbUser.role;
+          } else {
+            token.role = "user"; // Default role if not found
+          }
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+          token.role = "user"; // Default on error
+        }
       }
+      
+      console.log("JWT Callback - Outgoing token:", token);
       return token;
     },
     async redirect({ url, baseUrl }) {
