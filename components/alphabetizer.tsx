@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 export function Alphabetizer() {
   const { data: session, status } = useSession(); // Get session data
   const router = useRouter(); // Initialize router for redirection
+  const [loading, setLoading] = useState(true); // Loading state to prevent rendering before session is checked
 
   const [text, setText] = useState("");
   const [sorted, setSorted] = useState("");
@@ -29,12 +30,15 @@ export function Alphabetizer() {
   // Redirect immediately if session is unauthenticated
   useEffect(() => {
     if (status === "loading") {
-      // Prevent rendering content while session is loading
+      // While session is loading, keep loading state true
       return;
     }
+
     if (status === "unauthenticated") {
       // Redirect the user to the login page if unauthenticated
       router.push("/auth/login");
+    } else {
+      setLoading(false); // Session loaded and authenticated, stop loading
     }
   }, [status, router]);
 
@@ -78,8 +82,8 @@ export function Alphabetizer() {
     navigator.clipboard.writeText(sorted);
   };
 
-  // Show nothing or a loading state if session is still loading
-  if (status === "loading") {
+  // If session is still loading, return loading message or empty screen
+  if (loading || status === "loading") {
     return <div>Loading...</div>; // You can show a loading spinner here
   }
 
