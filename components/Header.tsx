@@ -11,6 +11,9 @@ export default function Header() {
           <Link href="/">
             <Button variant="outline">Home</Button>
           </Link>
+          <Link href="/alphabetizer">
+            <Button variant="outline">Alphabetizer</Button>
+          </Link>
           <Link href="/mongodb">
             <Button variant="outline">MongoDB Page</Button>
           </Link>
