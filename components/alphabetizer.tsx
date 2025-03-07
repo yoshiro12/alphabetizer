@@ -1,65 +1,90 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Copy, Download, Printer, Save } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react"; // Import useSession to check authentication
+import { useRouter } from "next/navigation"; // For redirecting the user
+import { Copy, Download, Printer, Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 export function Alphabetizer() {
-  const [text, setText] = useState("")
-  const [sorted, setSorted] = useState("")
+  const { data: session, status } = useSession(); // Get session data
+  const router = useRouter(); // Initialize router for redirection
+  const [loading, setLoading] = useState(true); // Loading state to prevent rendering before session is checked
+
+  const [text, setText] = useState("");
+  const [sorted, setSorted] = useState("");
   const [options, setOptions] = useState({
     removeDuplicates: false,
     lowercase: false,
     reverse: false,
     ignoreCase: false,
-  })
-  const [separator, setSeparator] = useState("newline")
-  const [customSeparator, setCustomSeparator] = useState("")
+  });
+  const [separator, setSeparator] = useState("newline");
+  const [customSeparator, setCustomSeparator] = useState("");
 
-  const handleSort = () => {
-    let lines: string[]
-
-    if (separator === "newline") {
-      lines = text.split(/\n/)
-    } else if (separator === "comma") {
-      lines = text.split(",").map((item) => item.trim())
-    } else if (separator === "custom" && customSeparator) {
-      lines = text.split(new RegExp(customSeparator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).map((item) => item.trim())
-    } else {
-      lines = [text] // If no valid separator, treat the entire text as one item
+  // Redirect immediately if session is unauthenticated
+  useEffect(() => {
+    if (status === "loading") {
+      // While session is loading, keep loading state true
+      return;
     }
 
-    let sortedLines = lines.filter((line) => line.trim() !== "") // Remove empty lines
+    if (status === "unauthenticated") {
+      // Redirect the user to the login page if unauthenticated
+      router.push("/auth/login");
+    } else {
+      setLoading(false); // Session loaded and authenticated, stop loading
+    }
+  }, [status, router]);
+
+  const handleSort = () => {
+    let lines: string[];
+
+    if (separator === "newline") {
+      lines = text.split(/\n/);
+    } else if (separator === "comma") {
+      lines = text.split(",").map((item) => item.trim());
+    } else if (separator === "custom" && customSeparator) {
+      lines = text.split(new RegExp(customSeparator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).map((item) => item.trim());
+    } else {
+      lines = [text]; // If no valid separator, treat the entire text as one item
+    }
+
+    let sortedLines = lines.filter((line) => line.trim() !== ""); // Remove empty lines
 
     if (options.ignoreCase) {
-      sortedLines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      sortedLines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     } else {
-      sortedLines.sort()
+      sortedLines.sort();
     }
 
     if (options.removeDuplicates) {
-      sortedLines = [...new Set(sortedLines)]
+      sortedLines = [...new Set(sortedLines)];
     }
 
     if (options.lowercase) {
-      sortedLines = sortedLines.map((line) => line.toLowerCase())
+      sortedLines = sortedLines.map((line) => line.toLowerCase());
     }
 
     if (options.reverse) {
-      sortedLines.reverse()
+      sortedLines.reverse();
     }
 
-    setSorted(sortedLines.join("\n"))
-  }
+    setSorted(sortedLines.join("\n"));
+  };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(sorted)
+    navigator.clipboard.writeText(sorted);
+  };
+
+  // If session is still loading, return loading message or empty screen
+  if (loading || status === "loading") {
+    return <div>Loading...</div>; // You can show a loading spinner here
   }
 
   return (
@@ -180,6 +205,5 @@ export function Alphabetizer() {
         )}
       </div>
     </div>
-  )
+  );
 }
-

@@ -1,11 +1,11 @@
-import type React from "react"
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"
+import { Inter } from "next/font/google";
 import "./globals.css";
-
-
-import { ThemeProvider } from "@/providers/theme-provider";
 import "@/styles/globals.css";
+import ThemeProviderWrapper from "@/components/ThemeProviderWrapper"; 
+import { Providers } from "@/components/Providers"; // ✅ Import SessionProvider
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Alphabetize Text Tool",
@@ -13,15 +13,13 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-const inter = Inter({ subsets: ["latin"] });
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+        <Providers> {/* ✅ Wrap everything inside SessionProvider */}
+          <ThemeProviderWrapper>{children}</ThemeProviderWrapper>
+        </Providers>
       </body>
     </html>
   );

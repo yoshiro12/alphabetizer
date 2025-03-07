@@ -1,8 +1,13 @@
+"use client";
+
+import { useSession } from "next-auth/react"; // Import useSession to check authentication
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
+  const { data: session } = useSession(); // Get session data
+
   return (
     <header className="border-b bg-background">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -11,9 +16,23 @@ export default function Header() {
           <Link href="/">
             <Button variant="outline">Home</Button>
           </Link>
-          <Link href="/mongodb">
-            <Button variant="outline">MongoDB Page</Button>
-          </Link>
+
+          {/* Conditionally render buttons based on session */}
+          {session ? (
+            <>
+              <Link href="/alphabetizer">
+                <Button variant="outline">Alphabetizer</Button>
+              </Link>
+              <Link href="/mongodb">
+                <Button variant="outline">MongoDB Page</Button>
+              </Link>
+            </>
+          ) : (
+            <Link href="/auth/login">
+              <Button variant="outline">Login</Button>
+            </Link>
+          )}
+          
           <ThemeToggle />
         </div>
       </div>
