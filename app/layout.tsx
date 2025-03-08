@@ -10,7 +10,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Alphabetize Text Tool",
   description: "A simple tool to alphabetize your text",
-  icons: { icon: "/favicon.ico" },
+  icons: [
+    { rel: "icon", url: "/favicon.ico" },        // Standard
+    { rel: "shortcut icon", url: "/favicon.ico" } // Some browsers rely on this
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -42,6 +42,42 @@ export function Alphabetizer() {
     }
   }, [status, router]);
 
+  const handleSave = () => {
+    const blob = new Blob([sorted], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "alphabetized-text.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(`<pre>${sorted}</pre>`);
+      printWindow.document.close();
+      printWindow.print();
+    } else {
+      alert("Unable to open print window. Please allow pop-ups for this site.");
+    }
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([sorted], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sorted-text.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  
+  
   const handleSort = () => {
     let lines: string[];
 
@@ -179,18 +215,23 @@ export function Alphabetizer() {
             <Copy className="mr-2 h-4 w-4" />
             Copy
           </Button>
-          <Button variant="outline" className="w-32">
+          <Button variant="outline" onClick={handleSave} className="w-32">
             <Save className="mr-2 h-4 w-4" />
             Save
           </Button>
-          <Button variant="outline" className="w-32">
+          <Button variant="outline" onClick={handlePrint} className="w-32">
             <Printer className="mr-2 h-4 w-4" />
             Print
           </Button>
-          <Button variant="outline" className="w-32">
+          <Button variant="outline" onClick={handleDownload} className="w-32">
             <Download className="mr-2 h-4 w-4" />
             Download
           </Button>
+
+
+
+
+
         </div>
 
         {sorted && (
