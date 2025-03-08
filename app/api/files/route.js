@@ -53,7 +53,7 @@ export async function GET(req) {
       
     const totalItems = await collection.countDocuments();
     
-    console.log("✅ Data fetched successfully!");
+    // console.log("✅ Data fetched successfully!");
     
     return new Response(
       JSON.stringify({

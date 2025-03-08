@@ -25,7 +25,7 @@ export const authOptions: AuthOptions = {
         
         if (!ALLOWED_EMAILS.includes(email)) {
 
-          console.error(`Unauthorized email login attempt: ${email}`);
+          // console.error(`Unauthorized email login attempt: ${email}`);
 
           // 🚨 Manually delete the token from the database
           await prisma.verificationToken.deleteMany({
@@ -62,8 +62,8 @@ export const authOptions: AuthOptions = {
   session: { strategy: "jwt" as const },
   callbacks: {
     async session({ session, token }: { session: any; token: any }) {
-      console.log("Session Callback - Incoming token:", token);
-      console.log("Session Callback - Incoming session:", session);
+      // console.log("Session Callback - Incoming token:", token);
+      // console.log("Session Callback - Incoming session:", session);
       
       if (session.user) {
         session.user.email = token.email || session.user.email;
@@ -71,12 +71,12 @@ export const authOptions: AuthOptions = {
         session.user.role = token.role || "user";
       }
       
-      console.log("Session Callback - Outgoing session:", session);
+      // console.log("Session Callback - Outgoing session:", session);
       return session;
     },
     async jwt({ token, user, account }: { token: any; user?: any; account?: any }) {
-      console.log("JWT Callback - Incoming user:", user);
-      console.log("JWT Callback - Incoming token:", token);
+      // console.log("JWT Callback - Incoming user:", user);
+      // console.log("JWT Callback - Incoming token:", token);
       
       if (user) {
         token.email = user.email;
@@ -97,7 +97,7 @@ export const authOptions: AuthOptions = {
             token.role = "user"; // Default role if not found
           }
         } catch (error) {
-          console.error("Error fetching user role:", error);
+          // console.error("Error fetching user role:", error);
           token.role = "user"; // Default on error
         }
       }
