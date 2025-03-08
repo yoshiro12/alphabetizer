@@ -2,7 +2,7 @@
 FROM node:18.20.7-alpine3.21 AS base
 
 # Install libc6-compat for compatibility
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat make g++
 
 # Set the working directory
 WORKDIR /app
