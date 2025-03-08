@@ -25,6 +25,9 @@ COPY . .
 # Ensure Prisma client is generated before build
 RUN npx prisma generate
 
+# Add this to fix the error: "Error: on Environment variable not found"
+ENV NEXT_PRIVATE_STANDALONE true
+
 # Build the Next.js application
 RUN npm run build
 
