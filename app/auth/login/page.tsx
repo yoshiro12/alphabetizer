@@ -12,7 +12,7 @@ export default function Login() {
   // Redirect to dashboard if already logged in
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/dashboard");
+      router.push("/");
     }
   }, [status, router]);
 
