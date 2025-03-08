@@ -25,7 +25,10 @@ COPY . .
 RUN npx prisma generate
 
 # Add this to fix the error: "Error: on Environment variable not found"
-ENV NEXT_PRIVATE_STANDALONE true
+# Dummy data"
+ENV RESEND_API_KEY="your_api_key_here"
+ENV MONGODB_URI="mongodb+srv://devuser:devpassword@mongodb.net/devdb"
+
 
 # Build the Next.js application
 RUN npm run build
