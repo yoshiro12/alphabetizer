@@ -89,7 +89,7 @@ export const authOptions: AuthOptions = {
             select: { role: true }
           });
           
-          console.log("JWT Callback - Database user:", dbUser);
+          //console.log("JWT Callback - Database user:", dbUser);
           
           if (dbUser) {
             token.role = dbUser.role;
@@ -102,7 +102,7 @@ export const authOptions: AuthOptions = {
         }
       }
       
-      console.log("JWT Callback - Outgoing token:", token);
+      //console.log("JWT Callback - Outgoing token:", token);
       return token;
     },
     async redirect({ url, baseUrl }) {
