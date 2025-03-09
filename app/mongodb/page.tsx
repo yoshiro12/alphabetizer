@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/Loading"; // Import Loading component
 import Header from "@/components/Header";
 
-const domain_url = process.env.NEXT_PUBLIC_CUSTOM_VALUE || "Change the value in on your .env file";
+
 
 interface DataItem {
   filename: string;
@@ -17,6 +17,7 @@ interface DataItem {
 }
 
 export default function MongoDBPage() {
+  const domain_url = process.env.NEXT_PUBLIC_CUSTOM_URL || "Change the value in on your .env file";
   const { data: session, status } = useSession(); // Get session data
   const router = useRouter(); // Initialize router for redirection
   const [loading, setLoading] = useState(true);
